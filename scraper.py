@@ -160,23 +160,27 @@ def download_images(input_file):
                 pass
 
 
-def get_dominant_color(filename):
-    color_thief = ColorThief(filename)
+# Get dominant color for a single company logo
+def get_dominant_color(row):
+    color_thief = ColorThief(row["Logo_File"])
     r, g, b = color_thief.get_color(quality=1)
     # print(filename, r, g, b)
     return r, g, b
 
 
+# Get dominant color for all companies
 def get_dominant_colors():
     csv_in = pd.read_csv(output_file)
-    csv_in["rgb"] = csv_in["Logo_File"].apply(get_dominant_color)
-    csv_in.to_csv("slogan_logo_list2.csv", index=False)
+    csv_in[["r", "g", "b"]] = csv_in.apply(
+        get_dominant_color, axis=1, result_type="expand"
+    )
+    csv_in.to_csv("slogan_logo_list.csv", index=False)
 
 
 def main():
-    # data = collect_data(category_list)
-    # write_data(data, output_file)
-    # download_images(output_file)
+    data = collect_data(category_list)
+    write_data(data, output_file)
+    download_images(output_file)
     get_dominant_colors()
     return 0
 
