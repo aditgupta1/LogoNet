@@ -2,6 +2,9 @@ import requests
 import csv
 import sys
 import time
+import urllib.request
+import ssl
+import os
 
 from bs4 import BeautifulSoup
 
@@ -88,11 +91,22 @@ def collect_data(category_list=None):
                         == "/theme/default/images/nopic.jpg"
                     ):
                         continue
-                    row = [
-                        org_names_logos[i].contents[1].strip(),
-                        org_slogans[i].contents[0].strip(),
+                    org_name = org_names_logos[i].contents[1].strip()
+                    org_slogan = org_slogans[i].contents[0].strip()
+                    org_logo_url = (
                         "https://www.sloganlist.com"
-                        + org_names_logos[i].contents[0]["src"],
+                        + org_names_logos[i].contents[0]["src"]
+                    )
+                    row = [
+                        category,
+                        org_name,
+                        org_slogan,
+                        org_logo_url,
+                        "images/{category}/{filename}.{filetype}".format(
+                            category=category,
+                            filename=org_name.replace(" ", "_"),
+                            filetype=org_logo_url[-3:],
+                        ),
                     ]
                     rows.append(row)
                     # print(row)
@@ -107,15 +121,47 @@ def write_data(data, output_file):
     with open(output_file, "w", newline="") as file:
         writer = csv.writer(file)
         # header of the csv
-        writer.writerow(["Company", "Slogan"])
+        writer.writerow(["Category", "Company", "Slogan", "Logo_Link", "Logo_File"])
         # contents
         writer.writerows(data)
     pass
 
 
+def download_images(input_file):
+    if not os.path.exists("images"):
+        os.makedirs("images")
+    # Adding information about user agent
+    ssl._create_default_https_context = ssl._create_unverified_context
+    opener = urllib.request.build_opener()
+    opener.addheaders = [
+        (
+            "User-Agent",
+            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36",
+        )
+    ]
+    urllib.request.install_opener(opener)
+    with open(input_file, newline="") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            # print(row["Logo_Link"])
+            filename = "images/{category}/{filename}.{filetype}".format(
+                category=row["Category"],
+                filename=row["Company"].replace(" ", "_"),
+                filetype=row["Logo_Link"][-3:],
+            )
+            if not os.path.exists("images/" + row["Category"]):
+                os.makedirs("images/" + row["Category"])
+            try:
+                urllib.request.urlretrieve(row["Logo_Link"], filename)
+            except (urllib.error.URLError):
+                print("ERROR:", row["Logo_Link"], filename)
+                pass
+
+
 def main():
-    data = collect_data(category_list)
-    write_data(data, output_file)
+    # data = collect_data(category_list)
+    # write_data(data, output_file)
+    # download_images(output_file)
     return 0
 
 
