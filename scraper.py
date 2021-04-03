@@ -5,6 +5,8 @@ import time
 import urllib.request
 import ssl
 import os
+import pandas as pd
+from colorthief import ColorThief
 
 from bs4 import BeautifulSoup
 
@@ -158,10 +160,24 @@ def download_images(input_file):
                 pass
 
 
+def get_dominant_color(filename):
+    color_thief = ColorThief(filename)
+    r, g, b = color_thief.get_color(quality=1)
+    # print(filename, r, g, b)
+    return r, g, b
+
+
+def get_dominant_colors():
+    csv_in = pd.read_csv(output_file)
+    csv_in["rgb"] = csv_in["Logo_File"].apply(get_dominant_color)
+    csv_in.to_csv("slogan_logo_list2.csv", index=False)
+
+
 def main():
     # data = collect_data(category_list)
     # write_data(data, output_file)
     # download_images(output_file)
+    get_dominant_colors()
     return 0
 
 
