@@ -11,10 +11,15 @@ import torch.nn as nn
 from torch import optim as optim
 
 #hyperparameters
-DATA_PATH = '../datasets/LLD-icon-sharp.hdf5'
 TOTAL_LOGO_COUNT = 60000
 BATCH_SIZE = 32
 NUM_EPOCHS = 100
+DATA_PATH = '../datasets/LLD-icon-sharp.hdf5'
+
+#uncomment these three lines for colab (after adding LLD-icon-sharp.hdf5 to your drive)
+# from google.colab import drive
+# drive.mount('/content/gdrive')
+# DATA_PATH = '/content/gdrive/My Drive/LLD-icon-sharp.hdf5'
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -64,7 +69,7 @@ class Generator(nn.Module):
       
     def forward(self, x, labels=None):
         x = self.main(x)
-        return x 
+        return x.to(device) 
 
 #GAN discriminator class
 class Discriminator(nn.Module):
@@ -89,7 +94,7 @@ class Discriminator(nn.Module):
         )
     def forward(self, x, labels=None):
         x = self.main(x)
-        return x 
+        return x.to(device)
 
 #single step of training for generator 
 def train_generator(batch_size):
@@ -129,17 +134,17 @@ images, labels, dataset = load_hdf5_data(DATA_PATH,TOTAL_LOGO_COUNT)
 
 dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
 
-generator = Generator(100, 32*32*3)
-discriminator = Discriminator(32*32*3, 1)
+generator = Generator(100, 32*32*3).to(device)
+discriminator = Discriminator(32*32*3, 1).to(device)
 
-generator_optimizer = optim.Adam(generator.parameters(), lr=0.001)
-discriminator_optimizer = optim.Adam(discriminator.parameters(), lr=0.001)
+generator_optimizer = optim.Adam(generator.parameters(), lr=0.0002)
+discriminator_optimizer = optim.Adam(discriminator.parameters(), lr=0.0001)
 
 for epoch in range(NUM_EPOCHS):
     G_loss = []
     D_loss = []
     for batch_idx, (data,labels) in enumerate(dataloader):
-        data,labels = data.float(), labels.float()
+        data,labels = data.float().to(device), labels.float().to(device)
         g_loss = train_generator(BATCH_SIZE)
         G_loss.append(g_loss)
         d_loss = train_discriminator(data, labels, BATCH_SIZE)
@@ -148,7 +153,7 @@ for epoch in range(NUM_EPOCHS):
         if (batch_idx + 1) % 500 == 0 and (epoch + 1) % 1 == 0:
             print(f"Epoch {epoch}: loss_d: {torch.mean(torch.FloatTensor(D_loss))}, loss_g: {torch.mean(torch.FloatTensor(G_loss))}")
     
-    noise = torch.randn(10, 100)
-    generated_imgs = generator(noise)
+    noise = torch.randn(10, 100).to(device)
+    generated_imgs = generator(noise).cpu().detach().numpy()
     plt.imshow(np.transpose(generated_imgs[0].reshape(3,32,32), (1, 2, 0)))
     plt.show()
