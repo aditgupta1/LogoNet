@@ -28,7 +28,7 @@ nz = 100
 nc = 3  # number of channels
 save_every = 1
 print_every = 50
-save_dir = os.path.join(data_path, 'models')
+save_dir = os.path.join(data_path, 'results')
 samples_dir = os.path.join(data_path, 'samples')
 
 # tells PyTorch to use an NVIDIA GPU, if one is available.
