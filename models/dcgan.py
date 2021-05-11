@@ -21,11 +21,11 @@ import matplotlib.pyplot as plt
 TOTAL_LOGO_COUNT = 60000
 BATCH_SIZE = 32
 NUM_EPOCHS = 10
-NC = 3 #number of channels in input image
-NZ = 100 #size of z latent space
-NGF = 64 # Size of feature maps in generator
-NDF = 64 #Size of feature maps in discriminator
-DATA_PATH = '../datasets/LLD-icon-sharp.hdf5'
+nc = 3 #number of channels in input image
+nz = 100 #size of z latent space
+ngf = 64 # Size of feature maps in generator
+ndf = 64 #Size of feature maps in discriminator
+DATA_PATH = 'LLD-icon-sharp.hdf5'
 
 #uncomment these three lines for colab (after adding LLD-icon-sharp.hdf5 to your drive)
 # from google.colab import drive
@@ -70,23 +70,23 @@ class Generator(nn.Module):
         super(Generator, self).__init__()
         #self.ngpu = ngpu
         self.main = nn.Sequential(
-            nn.ConvTranspose2d( 100, 64 * 8, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(64 * 8),
+            nn.ConvTranspose2d(100, 64*2, 4, 1, 0, bias=False),
+            nn.BatchNorm2d(64*2),
             nn.ReLU(True),
 
-            nn.ConvTranspose2d(64 * 8, 64 * 4, 4, 2, 1, bias=False),
+            nn.ConvTranspose2d(64 * 2, 64 * 4, 4, 2, 1, bias=False),
             nn.BatchNorm2d(64 * 4),
             nn.ReLU(True),
 
-            nn.ConvTranspose2d( 64 * 4, 64 * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(64 * 2),
+            nn.ConvTranspose2d( 64 * 4, 64 * 8, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(64 * 8),
             nn.ReLU(True),
 
-            nn.ConvTranspose2d( 64 * 2, 64, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(64),
-            nn.ReLU(True),
+            # nn.ConvTranspose2d( 64 * 8, 64, 4, 2, 1, bias=False),
+            # nn.BatchNorm2d(64),
+            # nn.ReLU(True),
 
-            nn.ConvTranspose2d( 64, 3, 4, 2, 1, bias=False),
+            nn.ConvTranspose2d(64*8, 3, 4, 2, 1, bias=False),
             nn.Tanh()
         )
 
@@ -102,27 +102,26 @@ class Discriminator(nn.Module):
             nn.Conv2d(3, 64, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf) x 32 x 32
-            nn.Conv2d(64, 64 * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(64 * 2),
+            nn.Conv2d(64, 128, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(128),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*2) x 16 x 16
-            nn.Conv2d(64 * 2, 64 * 4, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(64 * 4),
+            nn.Conv2d(128, 256, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(256),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*4) x 8 x 8
-            nn.Conv2d(64 * 4, 64 * 8, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(64 * 8),
-            nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*8) x 4 x 4
-            nn.Conv2d(64 * 8, 1, 4, 1, 0, bias=False),
+            nn.Conv2d(256, 1, 4, 1, 0, bias=False),
             nn.Sigmoid()
         )
 
     def forward(self, x):
+        print("bf1",x.shape)
         x = self.main(x)
-
-        return x.view(-1, 1).squeeze(1)
-
+        x = torch.squeeze(x)
+        print("af", x.shape)
+        print("af2", torch.squeeze(x).shape)
+        return x
 images, labels, dataset = load_hdf5_data(DATA_PATH,TOTAL_LOGO_COUNT)
 dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
 
@@ -137,15 +136,17 @@ optimizerD = optim.Adam(discriminator.parameters(), lr=0.0002)
 criterion = nn.BCELoss()
 
 for epoch in range(NUM_EPOCHS):
-    for i, data in enumerate(dataloader, 0):
-        data[0] = data[0].float().to(device)
-        data[1] = data[1].float().to(device)
+    G_loss = []
+    D_loss = []
+    for i, (data, labels) in enumerate(dataloader):
+        data,labels = data.float().to(device), labels.float().to(device)
+        print(data.shape)
         ############################
         # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
         ###########################
         # train with real
         discriminator.zero_grad()
-        real_cpu = data[0].to(device)
+        real_cpu = data.to(device)
         batch_size = real_cpu.size(0)
         label = torch.full((batch_size,), 1,
                            dtype=real_cpu.dtype, device=device)
@@ -171,7 +172,7 @@ for epoch in range(NUM_EPOCHS):
         ###########################
         generator.zero_grad()
         label.fill_(1)  # fake labels are real for generator cost
-        output = discrminator(fake)
+        output = discriminator(fake)
         errG = criterion(output, label)
         errG.backward()
         D_G_z2 = output.mean().item()
@@ -180,13 +181,13 @@ for epoch in range(NUM_EPOCHS):
         print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
               % (epoch, NUM_EPOCHS, i, len(dataloader),
                  errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
-        if i % 100 == 0:
-            vutils.save_image(real_cpu,
-                    'real_samples.png' ,
-                    normalize=True)
-            fake = generator(fixed_noise)
-            vutils.save_image(fake.detach(),
-                    'fake_samples_epoch_%03d.png' % (epoch),
-                    normalize=True)
+        # if i % 100 == 0:
+        #     vutils.save_image(real_cpu,
+        #             'real_samples.png' ,
+        #             normalize=True)
+        #     fake = generator(fixed_noise)
+        #     vutils.save_image(fake.detach(),
+        #             'fake_samples_epoch_%03d.png' % (epoch),
+        #             normalize=True)
 
 
