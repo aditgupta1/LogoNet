@@ -38,7 +38,7 @@ def make_32x32_dataset(dataset, batch_size, drop_remainder=True, shuffle=True, n
         img_shape = [32, 32, 1]
     elif dataset == "logo":
         path ='../LLD-icon-sharp.hdf5'
-        logo_count = 60000
+        logo_count = None #60000
         hdf5_file = h5py.File(path, 'r')
         images, labels = (hdf5_file['data'], hdf5_file['labels/resnet/rc_64'])
         
