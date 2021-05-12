@@ -1,0 +1,13 @@
+dataset: logo
+batch_size: 64
+epochs: 25
+lr: 0.0002
+beta_1: 0.5
+n_d: 1
+z_dim: 128
+adversarial_loss_mode: gan
+gradient_penalty_mode: none
+gradient_penalty_sample_mode: line
+gradient_penalty_weight: 10.0
+experiment_name: logo_gan
+gradient_penalty_d_norm: layer_norm
