@@ -11,13 +11,12 @@ In this project, we investigate how to provide artistic insipiration by generati
 
 ## Usage 
 
-Clone the repository
+1. Clone the repository
 
-Run  ```python models/train.py ``` to run the model.
+2. Download the dataset titled "LLD-icon-sharp HDF5" from https://data.vision.ee.ethz.ch/sagea/lld/. Store this HDF5 file in a "datasets" folder in your cloned repository.
+3. Run  ```python models/train.py ``` to run the model.
 
-Download the dataset titled "LLD-icon-sharp HDF5" from https://data.vision.ee.ethz.ch/sagea/lld/. Store this HDF5 file in a "datasets" folder in your cloned repository.
-
-Customize model by changing parameters. This includes the following:
+Customize model by changing parameters for ```models/train.py ```. This includes the following:
 
 Parameter | Bash Script | Options
 --- | --- | ---
@@ -29,6 +28,7 @@ Gradient Penalty Mode | '--gradient_penalty_mode' | 'none', '1-gp', '0-gp', 'lp'
 Gradient Penalty Weight | '--gradient_penalty_weight' | Any
 Experiment Name | '--experiment_name' | Any
 
+### Examples
 
 To train DCGAN for 50 epochs with learning rate 0.0001, run 
 
