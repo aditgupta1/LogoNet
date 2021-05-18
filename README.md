@@ -13,7 +13,7 @@ In this project, we investigate how to provide artistic insipiration by generati
 
 1. Clone the repository
 
-2. Download the dataset titled "LLD-icon-sharp HDF5" from https://data.vision.ee.ethz.ch/sagea/lld/. Store this HDF5 file in a "datasets" folder in your cloned repository.
+2. Download the dataset titled "LLD-icon-sharp HDF5" from https://data.vision.ee.ethz.ch/sagea/lld/. Store this HDF5 file in the "datasets" folder in your cloned repository.
 3. Run  ```python models/train.py ``` to run the model.
 
 Customize model by changing parameters for ```models/train.py ```. This includes the following:
