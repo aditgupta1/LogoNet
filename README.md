@@ -1,7 +1,7 @@
-# logoGAN
+# LogoNet: Generative Adversarial Network for Logo Creation
 
 ## Overview 
-In this project, we investigate how to provide artistic insipiration by generating a vast variety of logo designs. While there exists a small amount of literature on this highly unstable and large problem relating to logo generation, prior work hasn't been able to demonstrate stable generative models without the use intricate unsupervised clustering of the images. We show the creation of multiple stable generative adversarial networks (GANs) that are able to produce logos by optimizing the loss function used - this provides better gradients to the generator to learn during the early epochs. Specifically, we experiment with vanilla DCGAN's, WGAN, WGAN-GP, and LSGAN (see paper for full description). 
+In this project, we investigate how to provide artistic insipiration by generating a vast variety of logo designs. While there exists a small amount of literature on this highly unstable and large problem relating to logo generation, prior work hasn't been able to demonstrate stable generative models without the use intricate unsupervised clustering of the images. We show the creation of multiple stable generative adversarial networks (GANs) that are able to produce logos by optimizing the loss function used. We experiment with vanilla DCGAN's, WGAN, WGAN-GP, and LSGAN this provides better gradients to the generator to learn during the early epochs. Our results show that WGAN-GP was the most robust model in all criteria metrics used to evaluate logo generation (see paper for full details). 
 
 <!-- 
 ![alt text](?raw=true)
