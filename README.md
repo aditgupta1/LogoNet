@@ -15,6 +15,8 @@ Clone the repository
 
 Run  ```python models/train.py ``` to run the model.
 
+Download the dataset titled "LLD-icon-sharp HDF5" from https://data.vision.ee.ethz.ch/sagea/lld/. Store this HDF5 file in a "datasets" folder in your cloned repository.
+
 Customize model by changing parameters. This includes the following:
 
 Parameter | Bash Script | Options
