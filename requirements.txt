@@ -1,0 +1,7 @@
+PyTorch 1.1
+tensorboardX
+scikit-image
+oyaml
+tqdm
+Python 3.6
+numpy
