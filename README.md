@@ -5,7 +5,18 @@ In this project, we investigate how to provide artistic insipiration by generati
 
 The general architecture of the models is as follows:
 
-TODO; include images 
+### Discrminator:
+
+<img src="https://github.com/aditgupta1/logoGAN/blob/main/models/architecture_imgs/disc_img.png" alt="drawing" width="900"/>
+
+### Generator
+<img src="https://github.com/aditgupta1/logoGAN/blob/main/models/architecture_imgs/gen_img.png" alt="drawing" width="900"/>
+
+<!-- 
+![alt text](?raw=true)
+
+![alt text](https://github.com/aditgupta1/logoGAN/blob/main/models/architecture_imgs/gen_img.png?raw=true) -->
+
 
 ## Usage 
 
