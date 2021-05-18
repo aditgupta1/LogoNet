@@ -3,15 +3,6 @@
 ## Overview 
 In this project, we investigate how to provide artistic insipiration by generating a vast variety of logo designs. While there exists a small amount of literature on this highly unstable and large problem relating to logo generation, prior work hasn't been able to demonstrate stable generative models without the use intricate unsupervised clustering of the images. We show the creation of multiple stable generative adversarial networks (GANs) that are able to produce logos by optimizing the loss function used - this provides better gradients to the generator to learn during the early epochs. Specifically, we experiment with vanilla DCGAN's, WGAN, WGAN-GP, and LSGAN (see paper for full description). 
 
-The general architecture of the models is as follows:
-
-### Discrminator:
-
-<img src="https://github.com/aditgupta1/logoGAN/blob/main/models/architecture_imgs/disc_img.png" alt="drawing" width="900"/>
-
-### Generator
-<img src="https://github.com/aditgupta1/logoGAN/blob/main/models/architecture_imgs/gen_img.png" alt="drawing" width="900"/>
-
 <!-- 
 ![alt text](?raw=true)
 
@@ -49,7 +40,7 @@ To train WGAN-GP with gp-mode 1 for 50 epochs with learning rate 0.0001, run
 
 ```python models/train.py --epoch=50 --adversarial_loss_mode=wgan --gradient_penalty_mode=1-gp --experiment_name=wgan --lr=0.0001```
 
-Create an "outputs" folder inside of your models folder. Within the output folder, a "summaries" folder will be created that stores summaries of the models that are automatically saved (using TensorboardX) during training. Also the images generated at each time step will be stored in "samples_training" (also within outputs) and the folder is created by train.py .
+Create an "outputs" folder inside of your models folder. Within the output folder, a "summaries" folder will be created that stores summaries of the models that are automatically saved (using TensorboardX) during training. Also the images generated at each time step will be stored in "samples_training" (also within outputs) and the folder is created by train.py.
 
 ## Requirements 
 See requirements.txt 
