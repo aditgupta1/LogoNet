@@ -1,6 +1,8 @@
+#Main module for training and running GAN's for CPSC452 Final Project
 
+
+#import necessary modules 
 import functools
-
 import imlib as im
 import numpy as np
 import pylib as py
@@ -34,7 +36,7 @@ py.arg('--experiment_name', default='none')
 py.arg('--gradient_penalty_d_norm', default='layer_norm', choices=['instance_norm', 'layer_norm'])  # !!!
 args = py.args()
 
-# output_dir
+# output_directory initialization
 if args.experiment_name == 'none':
     args.experiment_name = '%s_%s' % (args.dataset, args.adversarial_loss_mode)
     if args.gradient_penalty_mode != 'none':
@@ -45,7 +47,7 @@ py.mkdir(output_dir)
 # save settings
 py.args_to_yaml(py.join(output_dir, 'settings.yml'), args)
 
-# others
+# Get CUDA ready
 use_gpu = torch.cuda.is_available()
 device = torch.device("cuda" if use_gpu else "cpu")
 
@@ -54,7 +56,7 @@ device = torch.device("cuda" if use_gpu else "cpu")
 # =                                    data                                    =
 # ==============================================================================
 
-# setup dataset
+# setup dataset. We mostly require the "logo" dataset and CIFAR-10 (for inception score)
 if args.dataset in ['cifar10', 'fashion_mnist', 'mnist', "logo"]:  # 32x32
     data_loader, shape = data.make_32x32_dataset(args.dataset, args.batch_size, pin_memory=use_gpu)
     n_G_upsamplings = n_D_downsamplings = 3
@@ -109,6 +111,7 @@ D_optimizer = torch.optim.Adam(D.parameters(), lr=args.lr, betas=(args.beta_1, 0
 # =                                 train step                                 =
 # ==============================================================================
 
+#train generatorr class
 def train_G():
     G.train()
     D.train()
@@ -125,7 +128,7 @@ def train_G():
 
     return {'g_loss': G_loss}
 
-
+#train discrminator class
 def train_D(x_real):
     G.train()
     D.train()
@@ -174,7 +177,7 @@ except:
 sample_dir = py.join(output_dir, 'samples_training')
 py.mkdir(sample_dir)
 
-# main loop
+# main loop to train generator/discrrminator and put results into summaries, output folder
 writer = tensorboardX.SummaryWriter(py.join(output_dir, 'summaries'))
 z = torch.randn(100, args.z_dim, 1, 1).to(device)  # a fixed noise for sampling
 
@@ -201,14 +204,14 @@ for ep_ in tqdm.trange(args.epochs, desc='Epoch Loop'):
             for k, v in G_loss_dict.items():
                 writer.add_scalar('G/%s' % k, v.data.cpu().numpy(), global_step=it_g)
 
-        # sample
+        # sample and store in directory
         if it_g % 100 == 0:
             x_fake = sample(z)
             x_fake = np.transpose(x_fake.data.cpu().numpy(), (0, 2, 3, 1))
             img = im.immerge(x_fake, n_rows=10).squeeze()
             im.imwrite(img, py.join(sample_dir, 'iter-%09d.jpg' % it_g))
 
-    # save checkpoint
+    # save checkpoint in summaries directory
     torchlib.save_checkpoint({'ep': ep, 'it_d': it_d, 'it_g': it_g,
                               'D': D.state_dict(),
                               'G': G.state_dict(),

@@ -1,3 +1,5 @@
+#Main module that streos the classes of the generator and discrminator class
+
 import functools
 
 import torchlib

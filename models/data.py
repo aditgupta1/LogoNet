@@ -1,3 +1,5 @@
+#Format and preprocess the images for the GAN
+
 import torchlib
 
 from torch.utils.data import DataLoader, Dataset

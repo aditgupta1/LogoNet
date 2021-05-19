@@ -44,6 +44,14 @@ To train WGAN-GP with gp-mode 1 for 50 epochs with learning rate 0.0001, run
 
 Create an "outputs" folder inside of your models folder. Within the output folder, a "summaries" folder will be created that stores summaries of the models that are automatically saved (using TensorboardX) during training. Also the images generated at each time step will be stored in "samples_training" (also within outputs) and the folder is created by train.py.
 
+In order to find inception score, train models using CIFAR-10 dataset (use '----dataset="cifar10' argument in command line) and then using the following repository: https://github.com/sbarratt/inception-score-pytorch. The models were too large to store in this repository without being corrupted. 
+
+## File Structure of /Model folder
+- train.py: source code to train generator and discriminatorr and store samples of the generated images
+- module.py: generator and discriminator classes
+- data.py: preprocessing datasets for train.py
+- imlib/pylib/torchlib/torchprob: various util files/folders
+
 ## Requirements 
 See requirements.txt 
 
