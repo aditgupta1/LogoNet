@@ -1,3 +1,5 @@
+#Module to scrape the sloganlist.com website for slogans + logos 
+
 import requests
 import csv
 import sys
