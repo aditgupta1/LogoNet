@@ -46,7 +46,7 @@ Create an "outputs" folder inside of your models folder. Within the output folde
 
 In order to find inception score, train models using CIFAR-10 dataset (use '----dataset="cifar10' argument in command line) and then using the following repository: https://github.com/sbarratt/inception-score-pytorch. The models were too large to store in this repository without being corrupted. 
 
-## File Structure of /Model folder
+## File Structure of /models folder
 - train.py: source code to train generator and discriminatorr and store samples of the generated images
 - module.py: generator and discriminator classes
 - data.py: preprocessing datasets for train.py

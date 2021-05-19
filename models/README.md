@@ -2,13 +2,17 @@ Pytorch implementations of [DCGAN](https://arxiv.org/abs/1511.06434), [LSGAN](ht
 
 Our Code based off of DCGAN, WGAN, WGAN-GP, and LSGAN implementations in Tensorflow from https://github.com/LynnHo/DCGAN-LSGAN-WGAN-GP-DRAGAN-Tensorflow-2. Our code is completely in Pytorch
 
-# Usage
+# Requirements
+- PyTorch 1.1
+- tensorboardX
+- scikit-image, oyaml, tqdm
+- Python 3.6
 
-- Prerequisites
+## File Structure of /models folder
+- train.py: source code to train generator and discriminatorr and store samples of the generated images
+- module.py: generator and discriminator classes
+- data.py: preprocessing datasets for train.py
+- imlib/pylib/torchlib/torchprob: various util files/folders
 
-    - PyTorch 1.1
-    - tensorboardX
-    - scikit-image, oyaml, tqdm
-    - Python 3.6
 
 
