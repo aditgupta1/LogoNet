@@ -39,7 +39,7 @@ def make_32x32_dataset(dataset, batch_size, drop_remainder=True, shuffle=True, n
         dataset = datasets.FashionMNIST('data/FashionMNIST', transform=transform, download=True)
         img_shape = [32, 32, 1]
     elif dataset == "logo":
-        path ='../datasets/LLD-icon-sharp.hdf5'
+        path ='datasets/LLD-icon-sharp.hdf5'
         logo_count = None #60000
         hdf5_file = h5py.File(path, 'r')
         images, labels = (hdf5_file['data'], hdf5_file['labels/resnet/rc_64'])
